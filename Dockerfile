@@ -11,24 +11,26 @@
 
 # Updated version
 
-FROM n8nio/n8n:latest
-
 USER root
 
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-# Install community nodes with pnpm
-RUN pnpm add -g \
-  n8n-nodes-evolution-api-english \
-  n8n-nodes-imap
+# Ensure the community nodes folder exists and is owned by node
+RUN mkdir -p /home/node/.n8n/nodes \
+  && chown -R node:node /home/node/.n8n
 
 USER node
 
-COPY ./entrypoint.sh /
+# Install community nodes into the location n8n loads from
+RUN npm install --prefix /home/node/.n8n/nodes \
+  n8n-nodes-evolution-api-english \
+  n8n-nodes-imap
+
+USER root
+WORKDIR /home/node/packages/cli
+ENTRYPOINT []
+
+COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT []
 CMD ["/entrypoint.sh"]
 
 # rebuild trigger v2.1
