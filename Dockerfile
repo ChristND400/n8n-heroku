@@ -11,15 +11,12 @@
 
 # Updated version
 
-USER root
+FROM n8nio/n8n:latest
 
-# Ensure the community nodes folder exists and is owned by node
-RUN mkdir -p /home/node/.n8n/nodes \
-  && chown -R node:node /home/node/.n8n
+USER root
+RUN mkdir -p /home/node/.n8n/nodes && chown -R node:node /home/node/.n8n
 
 USER node
-
-# Install community nodes into the location n8n loads from
 RUN npm install --prefix /home/node/.n8n/nodes \
   n8n-nodes-evolution-api-english \
   n8n-nodes-imap
