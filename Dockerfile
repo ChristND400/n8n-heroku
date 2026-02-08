@@ -14,22 +14,23 @@
 FROM n8nio/n8n:latest
 
 USER root
-WORKDIR /home/node
+RUN mkdir -p /home/node/.n8n/nodes \
+  && chown -R node:node /home/node/.n8n
 
-# Install community nodes globally
-RUN npm install -g \
+USER node
+WORKDIR /home/node/.n8n/nodes
+
+# Install your community nodes
+RUN npm install --omit=dev --no-audit --no-fund \
   n8n-nodes-evolution-api-english \
   n8n-nodes-imap
 
-# Tell n8n where to load custom nodes from
-ENV N8N_CUSTOM_EXTENSIONS=/usr/local/lib/node_modules
-
-USER node
-
+# Keep your existing entrypoint if you need it
+USER root
+WORKDIR /home/node/packages/cli
 ENTRYPOINT []
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
-
 CMD ["/entrypoint.sh"]
 
 # rebuild trigger v2.1
