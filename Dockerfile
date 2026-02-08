@@ -15,16 +15,16 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# (Optional) install multiple nodes As below
-# RUN npm install -g n8n-nodes-example n8n-nodes-other
+# Enable pnpm via Corepack
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install community nodes globally at build time
-RUN npm install -g n8n-nodes-evolution-api-english n8n-nodes-imap
+# Install community nodes with pnpm
+RUN pnpm add -g \
+  n8n-nodes-evolution-api-english \
+  n8n-nodes-imap
 
-# Restore correct permissions
 USER node
 
-# Custom entrypoint (if you need it)
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
