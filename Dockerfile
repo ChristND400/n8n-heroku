@@ -14,18 +14,20 @@
 FROM n8nio/n8n:latest
 
 USER root
-RUN mkdir -p /home/node/.n8n/nodes && chown -R node:node /home/node/.n8n
+WORKDIR /home/node
 
-USER node
-RUN npm install --prefix /home/node/.n8n/nodes \
+# Install community nodes globally
+RUN npm install -g \
   n8n-nodes-evolution-api-english \
   n8n-nodes-imap
 
-USER root
-WORKDIR /home/node/packages/cli
-ENTRYPOINT []
+# Tell n8n where to load custom nodes from
+ENV N8N_CUSTOM_EXTENSIONS=/usr/local/lib/node_modules
 
-COPY ./entrypoint.sh /entrypoint.sh
+USER node
+
+ENTRYPOINT []
+COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
