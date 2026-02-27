@@ -38,4 +38,4 @@ COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 CMD ["/entrypoint.sh"]
 
-# rebuild trigger v2.1
+# rebuild trigger v2.2
