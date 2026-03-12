@@ -28,8 +28,7 @@ WORKDIR /home/node/.n8n/nodes
 # Install community nodes list
 RUN npm install --omit=dev --no-audit --no-fund \
   n8n-nodes-evolution-api-english \
-  # n8n-nodes-imap \
-  n8n-nodes-digital-ocean
+  n8n-nodes-imap
   # n8n-nodes-globals
 
 # existing entrypoint
