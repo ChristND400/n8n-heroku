@@ -68,4 +68,4 @@ CMD ["/entrypoint.sh"]
 
 # CMD ["/entrypoint.sh"]
 
-# rebuild trigger v2.11
+# rebuild trigger v2.12
