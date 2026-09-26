@@ -46,23 +46,26 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install build dependencies required by node-gyp / isolated-vm
+# Restore apk because the official n8n image removes it
+COPY --from=alpine:3.22 /sbin/apk /sbin/apk
+COPY --from=alpine:3.22 /lib/apk /lib/apk
+COPY --from=alpine:3.22 /usr/lib/libapk* /usr/lib/
+
+# Install the tools required by node-gyp
 RUN apk add --no-cache \
     python3 \
     make \
     g++
+
+ENV PYTHON=/usr/bin/python3
 
 RUN mkdir -p /home/node/.n8n/nodes \
     && chown -R node:node /home/node/.n8n
 
 USER node
 
-# Specify npm/node-gyp exactly which Python to use
-ENV PYTHON=/usr/bin/python3
-
 WORKDIR /home/node/.n8n/nodes
 
-# community nodes
 RUN npm install --omit=dev --no-audit --no-fund \
     n8n-nodes-evolution-api-english
 
@@ -76,6 +79,7 @@ COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
+
 
 
 #end
