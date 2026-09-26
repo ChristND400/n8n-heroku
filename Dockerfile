@@ -46,12 +46,12 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Restore apk because the official n8n image removes it
-COPY --from=alpine:3.22 /sbin/apk /sbin/apk
-COPY --from=alpine:3.22 /lib/apk /lib/apk
-COPY --from=alpine:3.22 /usr/lib/libapk* /usr/lib/
+# n8n currently uses Alpine 3.24 repositories.
+# Restore apk from the matching Alpine release.
+COPY --from=alpine:3.24 /sbin/apk /sbin/apk
+COPY --from=alpine:3.24 /lib/apk /lib/apk
+COPY --from=alpine:3.24 /usr/lib/libapk* /usr/lib/
 
-# Install the tools required by node-gyp
 RUN apk add --no-cache \
     python3 \
     make \
@@ -79,8 +79,6 @@ COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
-
-
 
 #end
 
