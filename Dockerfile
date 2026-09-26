@@ -16,30 +16,69 @@
 # Heroku’s filesystem is ephemeral, so when the dyno restarts/recycles, those files can disappear and n8n then marks the package as “missing / broken”, forcing to reinstall.)
 # This version below makes sure to tell n8n to auto-reinstall missing community nodes
 
+#Stable
+# FROM n8nio/n8n:latest
+
+# USER root
+# RUN mkdir -p /home/node/.n8n/nodes \
+#   && chown -R node:node /home/node/.n8n
+
+# USER node
+# WORKDIR /home/node/.n8n/nodes
+
+# # Install community nodes list
+# RUN npm install --omit=dev --no-audit --no-fund \
+#   n8n-nodes-evolution-api-english 
+#   # n8n-nodes-imap
+#   # n8n-nodes-globals
+
+# # existing entrypoint
+# USER root
+# WORKDIR /home/node/packages/cli
+# ENTRYPOINT []
+# COPY ./entrypoint.sh /
+# RUN chmod +x /entrypoint.sh
+# CMD ["/entrypoint.sh"]
+
+# New test version
+
 FROM n8nio/n8n:latest
 
 USER root
+
+# Install build dependencies required by node-gyp / isolated-vm
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++
+
 RUN mkdir -p /home/node/.n8n/nodes \
-  && chown -R node:node /home/node/.n8n
+    && chown -R node:node /home/node/.n8n
 
 USER node
+
+# Specify npm/node-gyp exactly which Python to use
+ENV PYTHON=/usr/bin/python3
+
 WORKDIR /home/node/.n8n/nodes
 
-# Install community nodes list
+# community nodes
 RUN npm install --omit=dev --no-audit --no-fund \
-  n8n-nodes-evolution-api-english 
-  # n8n-nodes-imap
-  # n8n-nodes-globals
+    n8n-nodes-evolution-api-english
 
-# existing entrypoint
 USER root
+
 WORKDIR /home/node/packages/cli
+
 ENTRYPOINT []
-COPY ./entrypoint.sh /
+
+COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
 CMD ["/entrypoint.sh"]
 
-# New version
+
+#end
 
 # FROM n8nio/n8n:stable
 
